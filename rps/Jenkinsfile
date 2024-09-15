@@ -32,7 +32,7 @@ pipeline {
 	      stage ('tomcat stop') {
 		steps {
 		  dir ("/root/apache-tomcat-9.0.89/bin/") {
-		    sh "shutdown.sh" 
+		    sh "sh shutdown.sh" 
 		}	 
                 }
          	}
