@@ -1,49 +1,61 @@
 pipeline {
     agent {
     node {
-	       label 'built-in'
-		   customWorkspace "/root/rps"	 
-	}
-	}
+       label 'built-in'
+       customWorkspace "/root/rps"	 
+     }
+     }
 
           stages {
+		  
+	    stage('CleanWorkspace'){
+              steps {
+              cleanWs()
+            }
+            }
 
-	        stage('CleanWorkspace'){
-                steps {
-                cleanWs()
-                }
-                }
-
-		stage ('gitclone') {
-		steps {
+	    stage ('gitclone') {
+	      steps {
 		sh "git clone https://github.com/kshiteez/rock-paper-scissors.git"
 		}	 
                 }
 					
-		        stage ('mvn build') {
-		        steps {
-		        dir ("/root/rps/rock-paper-scissors/") {
-		        sh "mvn clean"
-	                sh "mvn install" 
-			    }	 
+              stage ('mvn build') {
+		steps {
+		  dir ("/root/rps/rock-paper-scissors/") {
+		    sh "mvn clean"
+	            sh "mvn install" 
+		}	 
                 }
-		        }
+         	}
+
+	      stage ('tomcat stop') {
+		steps {
+		  dir ("/root/apache-tomcat-9.0.89/bin/") {
+		    sh "shutdown.sh" 
+		}	 
+                }
+         	}
+
+		    
 					
-				stage ('deployment') {
-		        steps {
-		        sh "cp -r /root/rps/rock-paper-scissors/target/rock-paper-scissors.war /root/apache-tomcat-9.0.89/webapps/"
-				}
-                      }
+               stage ('deployment') {
+                 steps {
+                   sh 'rm -rf /root/apache-tomcat-9.0.89/webapps/rock-paper-scissors.war'	
+                   sh "cp -r /root/rps/rock-paper-scissors/target/rock-paper-scissors.war /root/apache-tomcat-9.0.89/webapps/"
+                    }
+                    }
 				
-				stage ('start tomcat server') {
-		        steps {
-				keepRunning {	
-				dir ("/root/apache-tomcat-9.0.89/bin/") {
-                                sh 'sh startup.sh'
-				}
-                                }
-				}
-		        }
+	        stage ('start tomcat server') {
+		  steps {
+	          keepRunning {	
+	          dir ("/root/apache-tomcat-9.0.89/bin/") {
+		    sh 'sh stop.sh'	
+                    sh 'sh startup.sh'
+		  }
+                  }
+		  }
+		  }
 		
             }	
 }				
