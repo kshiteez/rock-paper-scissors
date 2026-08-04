@@ -6,8 +6,8 @@
 
   <groupId>com.mcnz.rps.web</groupId>
   <artifactId>rock-paper-scissors</artifactId>
-  <version>1.0</version>
-  <packaging>war</packaging>
+  <version>2.0</version>
+  <packaging>jar</packaging>
 
   <name>rock-paper-scissors web application</name>
   <url>http://www.mcnz.com</url>
